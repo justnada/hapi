@@ -10,9 +10,10 @@ const userMoodController = {};
 userMoodController.getAllUserMood = async (req, res, next) => {
   const { date } = req.query;
 
-  if (!date) throw new ErrorResponse("Date is required", 400);
-
   try {
+    if (!date)
+      throw new ErrorResponse("Date is required with format YYYY-MM", 400);
+
     const userMoods = await UserMood.userMoods.findAll({
       where: {
         date: { [Op.like]: `${date}%` },
@@ -31,15 +32,42 @@ userMoodController.getAllUserMood = async (req, res, next) => {
       },
     });
 
-    const newUserMoods = userMoods.map((um) => {
-      return {
+    const map = new Map();
+    let result = [];
+    let totalDate = new Date(
+      date.split("-")[0],
+      date.split("-")[1],
+      0
+    ).getDate();
+
+    userMoods.map((um) => {
+      let day = um?.dataValues?.date.split("-")[2];
+
+      map.set(Number(day), {
         id: um?.dataValues?.id,
-        date: um?.dataValues?.date,
         mood: um?.dataValues?.mood.dataValues.mood,
-      };
+      });
     });
 
-    return successResponse(res, newUserMoods);
+    for (i = 1; i <= totalDate; i++) {
+      let temp = {
+        id: "",
+        date: i,
+        mood: "",
+      };
+
+      if (map.get(i) != undefined) {
+        temp = {
+          ...temp,
+          id: String(map.get(i).id),
+          mood: map.get(i).mood,
+        };
+      }
+
+      result.push(temp);
+    }
+
+    return successResponse(res, result);
   } catch (error) {
     next(error);
   }

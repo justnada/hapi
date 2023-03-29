@@ -5,7 +5,7 @@ const errorHandler = (err, req, res, next) => {
   console.error("ERROR DETECTED :", err.name);
   console.error("Causes - ", err.message);
 
-  if(err.code || process.env.NODE_ENV === 'development'){
+  if (err.code || process.env.NODE_ENV === "development") {
     console.error("Code - ", err.code);
     console.error(err);
   }
@@ -19,7 +19,6 @@ const errorHandler = (err, req, res, next) => {
   // Joi error middleware
   let errorField;
 
-
   // Request Error
   if (err.name === "ReferenceError") {
     const message = `Something went wrong with the server. TODO : please contact the maintainer.`;
@@ -28,7 +27,8 @@ const errorHandler = (err, req, res, next) => {
 
   // SyntaxError on Client JSON
   if (err.name === "SyntaxError") {
-    const message = "Failed to take your request, please check your request body / parameter.";
+    const message =
+      "Failed to take your request, please check your request body / parameter.";
     customError = new ErrorResponse(message, 400);
   }
 
@@ -45,7 +45,9 @@ const errorHandler = (err, req, res, next) => {
 
   // ERROR METHOD from external Services
   if (err.response) {
-    let message = err.response.status ? err.response.statusText : "Failed to get response from External service";
+    let message = err.response.status
+      ? err.response.statusText
+      : "Failed to get response from External service";
     customError = new ErrorResponse(message, 400);
   }
 

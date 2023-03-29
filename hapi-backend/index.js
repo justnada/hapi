@@ -31,8 +31,8 @@ app.use(errorHandler);
 
 app.use((req, res, next) => {
   res.status(404).json({
-    code: "2",
-    error: "Error : Route Not Found ",
+    code: "0",
+    error: "Route Not Found ",
   });
 });
 
